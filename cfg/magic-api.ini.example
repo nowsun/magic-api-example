@@ -1,0 +1,16 @@
+[spring.datasource]
+url=jdbc:postgresql://127.0.0.1:5432/magic_api
+username=magic_api_app
+password=replace-with-a-database-password
+
+[magic-api.security]
+login=1
+username=admin
+password=replace-with-a-long-random-admin-password
+
+[magic-api]
+secret-key=
+
+[saas.auth]
+token-signing-key=replace-with-at-least-32-random-characters
+token-ttl-seconds=3600

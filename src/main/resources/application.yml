@@ -1,0 +1,75 @@
+server:
+  address: 127.0.0.1
+  port: 9999
+  compression:
+    enabled: true
+    min-response-size: 128
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+magic-api:
+  web: /web
+  resource:
+    type: database
+    tableName: magic_api_file_v2
+    readonly: false
+  prefix: /
+  auto-import-module: db
+  auto-import-package: java.lang.*,java.util.*
+  allow-override: false
+  sql-column-case: camel
+  editor-config: classpath:./magic-editor.js
+  support-cross-domain: false
+  push-path: /_magic-api-sync
+  show-sql: true
+  compile-cache-size: 500
+  persistence-response-body: true
+  date-pattern:
+    - yyyy-MM-dd
+    - yyyy-MM-dd HH:mm:ss
+    - yyyyMMddHHmmss
+    - yyyyMMdd
+  response: |-
+    {
+      code: code,
+      message: message,
+      data,
+      timestamp,
+      requestTime,
+      executeTime,
+    }
+  response-code:
+    success: 1
+    invalid: 0
+    exception: -1
+  banner: true
+  thread-pool-executor-size: 8
+  throw-exception: false
+  backup:
+    enable: true
+    max-history: -1
+    table-name: magic_backup_record_v2
+  crud:
+    logic-delete-column: deleted
+    logic-delete-value: 1
+  cache:
+    capacity: 10000
+    ttl: -1
+    enable: true
+  page:
+    size: size
+    page: page
+    default-page: 1
+    default-size: 10
+  swagger:
+    version: 1.0
+    description: MagicAPI 接口信息
+    title: MagicAPI 接口文档
+    name: MagicAPI 接口
+    location: /v2/api-docs/magic-api/swagger2.json
+  debug:
+    timeout: 60
+saas:
+  auth:
+    token-ttl-seconds: 3600

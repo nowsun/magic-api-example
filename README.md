@@ -190,7 +190,7 @@ PostgreSQL `bigint`，应使用十进制字符串，避免超过 `Number.MAX_SAF
 
 The `token` header is separate from any API parameter also named `token`.
 
-The token is HMAC-SHA256 signed with the platform signing key and checked against
+The token is HMAC-SHA256 signed (truncated to a 128-bit tag) with the platform signing key and checked against
 `magic_api_access` by a Spring MVC pre-handler on every dynamic API request, before
 Magic-API parameter validation or script execution. Disabling or expiring a key
 therefore rejects its existing tokens immediately. Missing, invalid, or expired

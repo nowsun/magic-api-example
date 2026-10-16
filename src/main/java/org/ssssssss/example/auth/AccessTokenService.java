@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class AccessTokenService {
 
 	private static final String HMAC_ALGORITHM = "HmacSHA256";
+	private static final int SIGNATURE_LENGTH_BYTES = 16;
 	private static final int MAX_CREDENTIAL_LENGTH = 256;
 	private static final int MAX_TOKEN_LENGTH = 8192;
 
@@ -54,8 +56,8 @@ public class AccessTokenService {
 		}
 		long expiresAt = System.currentTimeMillis() / 1000L + tokenTtlSeconds;
 		Map<String, Object> claims = new LinkedHashMap<>();
-		claims.put("accessKeyId", accessKeyId);
-		claims.put("tenantId", record.getTenantId());
+		claims.put("ak", accessKeyId);
+		claims.put("t", record.getTenantId());
 		claims.put("exp", expiresAt);
 		try {
 			String payload = Base64.getUrlEncoder().withoutPadding()
@@ -82,8 +84,8 @@ public class AccessTokenService {
 			if (claims == null || !claims.isObject()) {
 				throw new InvalidAccessTokenException();
 			}
-			String accessKeyId = textClaim(claims, "accessKeyId");
-			JsonNode tenantIdClaim = claims.get("tenantId");
+			String accessKeyId = textClaim(claims, "ak");
+			JsonNode tenantIdClaim = claims.get("t");
 			if (tenantIdClaim == null || !tenantIdClaim.isIntegralNumber()
 					|| !tenantIdClaim.canConvertToLong()) {
 				throw new InvalidAccessTokenException();
@@ -116,8 +118,9 @@ public class AccessTokenService {
 		try {
 			Mac mac = Mac.getInstance(HMAC_ALGORITHM);
 			mac.init(new SecretKeySpec(signingKey, HMAC_ALGORITHM));
+			byte[] digest = mac.doFinal(value.getBytes(StandardCharsets.US_ASCII));
 			return Base64.getUrlEncoder().withoutPadding()
-					.encodeToString(mac.doFinal(value.getBytes(StandardCharsets.US_ASCII)));
+					.encodeToString(Arrays.copyOf(digest, SIGNATURE_LENGTH_BYTES));
 		} catch (GeneralSecurityException e) {
 			throw new IllegalStateException("Unable to sign access token", e);
 		}

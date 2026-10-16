@@ -31,6 +31,9 @@ Copy-Item cfg\magic-api.ini.example cfg\magic-api.ini
 任何能够访问该地址的人都可以进入设计器，因此只应在可信的内部网络中使用，并通过
 防火墙或反向代理限制访问。
 
+接口文档（Knife4j）地址为 `http://localhost:9999/doc.html`，用于查看 Magic-API 动态
+接口生成的 Swagger 文档。
+
 ## PostgreSQL schema
 
 Create a dedicated database and least-privilege application role, then apply:

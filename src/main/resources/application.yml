@@ -8,6 +8,9 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 magic-api:
   web: /web
   resource:
@@ -47,7 +50,7 @@ magic-api:
   thread-pool-executor-size: 8
   throw-exception: false
   backup:
-    enable: true
+    enable: false
     max-history: -1
     table-name: magic_backup_record_v2
   crud:
@@ -64,12 +67,17 @@ magic-api:
     default-size: 10
   swagger:
     version: 1.0
-    description: MagicAPI 接口信息
-    title: MagicAPI 接口文档
-    name: MagicAPI 接口
+    description: OpenAPI接口信息
+    title: OpenAPI接口文档
+    name: OpenAPI接口
     location: /v2/api-docs/magic-api/swagger2.json
   debug:
     timeout: 60
+knife4j:
+  enable: true
+  production: false
+  setting:
+    language: zh-CN
 saas:
   auth:
     token-ttl-seconds: 3600

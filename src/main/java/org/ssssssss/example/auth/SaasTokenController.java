@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.ssssssss.magicapi.core.model.JsonBean;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 
+@Api(tags = "认证接口")
 @RestController
 @RequestMapping("/auth")
 public class SaasTokenController {
@@ -18,6 +23,7 @@ public class SaasTokenController {
 		this.accessTokenService = accessTokenService;
 	}
 
+	@ApiOperation(value = "换取访问令牌", notes = "使用 AccessKey ID 和 Secret 换取短期访问令牌；调用动态 API 时需在认证请求头中携带返回的令牌")
 	@PostMapping("/token")
 	public ResponseEntity<?> issueToken(@RequestBody TokenRequest request) {
 		try {
@@ -29,8 +35,11 @@ public class SaasTokenController {
 		}
 	}
 
+	@ApiModel("令牌请求")
 	public static class TokenRequest {
+		@ApiModelProperty(value = "AccessKey ID", required = true)
 		private String accessKeyId;
+		@ApiModelProperty(value = "AccessKey Secret", required = true)
 		private String accessKeySecret;
 
 		public String getAccessKeyId() {

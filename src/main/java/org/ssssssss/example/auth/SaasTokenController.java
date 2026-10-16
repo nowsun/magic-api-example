@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "认证接口")
+@Api(tags = "Token认证")
 @RestController
 @RequestMapping("/auth")
 public class SaasTokenController {

@@ -21,7 +21,7 @@ public class SwaggerConfiguration {
 	@Bean
 	public Docket authApiDocket() {
 		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("授权认证")
+				.groupName("Token认证")
 				.select()
 				.apis(RequestHandlerSelectors.basePackage("org.ssssssss.example.auth"))
 				.paths(PathSelectors.any())

@@ -15,10 +15,13 @@ public class SaasApiAuthenticationInterceptor implements HandlerInterceptor {
 
 	private final AccessTokenService accessTokenService;
 	private final ObjectMapper objectMapper;
+	private final TenantRateLimiter rateLimiter;
 
-	public SaasApiAuthenticationInterceptor(AccessTokenService accessTokenService, ObjectMapper objectMapper) {
+	public SaasApiAuthenticationInterceptor(AccessTokenService accessTokenService, ObjectMapper objectMapper,
+											TenantRateLimiter rateLimiter) {
 		this.accessTokenService = accessTokenService;
 		this.objectMapper = objectMapper;
+		this.rateLimiter = rateLimiter;
 	}
 
 	@Override
@@ -29,6 +32,9 @@ public class SaasApiAuthenticationInterceptor implements HandlerInterceptor {
 		try {
 			String token = request.getHeader("token");
 			long tenantId = accessTokenService.validateToken(token);
+			if (!rateLimiter.tryAcquire(tenantId)) {
+				return rateLimitReject(response);
+			}
 			request.setAttribute(SaasRequestInterceptor.TENANT_ID_VARIABLE, tenantId);
 			return true;
 		} catch (InvalidAccessTokenException e) {
@@ -41,6 +47,14 @@ public class SaasApiAuthenticationInterceptor implements HandlerInterceptor {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		objectMapper.writeValue(response.getWriter(), new JsonBean<>(401, "Bearer token is missing, expired, or invalid"));
+		return false;
+	}
+
+	private boolean rateLimitReject(HttpServletResponse response) throws IOException {
+		response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		objectMapper.writeValue(response.getWriter(), new JsonBean<>(429, "Too many requests; rate limit exceeded"));
 		return false;
 	}
 

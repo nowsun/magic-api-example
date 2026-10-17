@@ -12,6 +12,7 @@ import org.ssssssss.example.auth.AccessTokenService;
 import org.ssssssss.example.auth.SaasAuthProperties;
 import org.ssssssss.example.auth.SaasApiAuthenticationInterceptor;
 import org.ssssssss.example.auth.SaasRequestInterceptor;
+import org.ssssssss.example.auth.TenantRateLimiter;
 import org.ssssssss.magicapi.core.interceptor.AuthorizationInterceptor;
 import org.ssssssss.magicapi.core.interceptor.DefaultAuthorizationInterceptor;
 import org.ssssssss.magicapi.core.interceptor.RequestInterceptor;
@@ -28,17 +29,23 @@ public class SaasAuthConfiguration {
 	}
 
 	@Bean
+	public TenantRateLimiter tenantRateLimiter(SaasAuthProperties properties) {
+		return new TenantRateLimiter(properties.getRateLimitQps());
+	}
+
+	@Bean
 	public RequestInterceptor saasRequestInterceptor() {
 		return new SaasRequestInterceptor();
 	}
 
 	@Bean
 	public WebMvcConfigurer saasApiAuthenticationConfigurer(AccessTokenService accessTokenService,
-														   ObjectMapper objectMapper) {
+														   ObjectMapper objectMapper,
+														   TenantRateLimiter tenantRateLimiter) {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addInterceptors(InterceptorRegistry registry) {
-				registry.addInterceptor(new SaasApiAuthenticationInterceptor(accessTokenService, objectMapper))
+				registry.addInterceptor(new SaasApiAuthenticationInterceptor(accessTokenService, objectMapper, tenantRateLimiter))
 						.addPathPatterns("/**");
 			}
 		};

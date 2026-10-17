@@ -2,6 +2,7 @@ package org.ssssssss.example.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +28,10 @@ public class SaasTokenController {
 		this.accessTokenService = accessTokenService;
 	}
 
-	@ApiOperation(value = "换取访问令牌",
-			notes = "使用 AccessKey ID 和 Secret 换取短期访问令牌；调用动态 API 时需在认证请求头中携带返回的令牌",
-			response = AccessTokenService.IssuedToken.class)
+	// 接口描述（含红色提醒语）由 TokenAuthOperationNotesPlugin 动态生成，需引用 magic-api.swagger.name
+	@ApiOperation(value = "换取访问令牌")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "换取成功",
-					response = AccessTokenService.IssuedToken.class,
 					examples = @Example(value = @ExampleProperty(
 							mediaType = "application/json",
 							value = "{\n"
@@ -43,14 +42,15 @@ public class SaasTokenController {
 			@ApiResponse(code = 401, message = "AccessKey ID 或 Secret 校验失败")
 	})
 	@PostMapping("/token")
-	public ResponseEntity<?> issueToken(@RequestBody TokenRequest request) {
-		try {
-			return ResponseEntity.ok(accessTokenService.issueToken(
-					request.getAccessKeyId(), request.getAccessKeySecret()));
-		} catch (InvalidAccessTokenException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new JsonBean<>(401, "Invalid access credentials"));
-		}
+	public ResponseEntity<AccessTokenService.IssuedToken> issueToken(@RequestBody TokenRequest request) {
+		return ResponseEntity.ok(accessTokenService.issueToken(
+				request.getAccessKeyId(), request.getAccessKeySecret()));
+	}
+
+	@ExceptionHandler(InvalidAccessTokenException.class)
+	public ResponseEntity<JsonBean<Void>> handleInvalidAccessToken(InvalidAccessTokenException e) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new JsonBean<>(401, "Invalid access credentials"));
 	}
 
 	@ApiModel("令牌请求")

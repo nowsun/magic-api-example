@@ -14,3 +14,5 @@ secret-key=
 [saas.auth]
 token-signing-key=replace-with-at-least-32-random-characters
 token-ttl-seconds=3600
+# 每个租户（tenantId）每秒最大请求数（QPS）；0 表示不限流
+rate-limit-qps=10

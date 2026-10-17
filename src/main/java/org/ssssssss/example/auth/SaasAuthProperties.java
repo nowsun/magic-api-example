@@ -7,6 +7,11 @@ public class SaasAuthProperties {
 
 	private String tokenSigningKey;
 	private long tokenTtlSeconds = 3600;
+	/**
+	 * 每个租户（tenantId）每秒允许的最大请求数（QPS）。
+	 * {@code 0} 或负数表示不限流。
+	 */
+	private int rateLimitQps = 10;
 
 	public String getTokenSigningKey() {
 		return tokenSigningKey;
@@ -22,5 +27,13 @@ public class SaasAuthProperties {
 
 	public void setTokenTtlSeconds(long tokenTtlSeconds) {
 		this.tokenTtlSeconds = tokenTtlSeconds;
+	}
+
+	public int getRateLimitQps() {
+		return rateLimitQps;
+	}
+
+	public void setRateLimitQps(int rateLimitQps) {
+		this.rateLimitQps = rateLimitQps;
 	}
 }

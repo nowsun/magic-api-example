@@ -2,6 +2,8 @@ package org.ssssssss.example.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.Mac;
@@ -152,8 +154,12 @@ public class AccessTokenService {
 		}
 	}
 
+	@ApiModel("令牌响应")
 	public static final class IssuedToken {
+		@ApiModelProperty(value = "短期访问令牌（Base64URL 载荷 + HMAC-SHA256 签名）",
+				example = "eyJhayI6IjNiY2E2MGRiODc0ZjYxNzZhM2UxYTg3NyIsInQiOjM1NjEyMywiZXhwIjoxNzkyMjI2NjU0fQ.iIsvqBPscEV-CjfrumGtlg")
 		private final String accessToken;
+		@ApiModelProperty(value = "令牌有效期（秒）", example = "3600")
 		private final long expiresIn;
 
 		public IssuedToken(String accessToken, long expiresIn) {
@@ -165,6 +171,7 @@ public class AccessTokenService {
 			return accessToken;
 		}
 
+		@ApiModelProperty(value = "令牌类型", example = "token")
 		public String getTokenType() {
 			return "token";
 		}

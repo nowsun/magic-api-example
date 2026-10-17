@@ -11,6 +11,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 
 @Api(tags = "Token认证")
 @RestController
@@ -23,7 +27,21 @@ public class SaasTokenController {
 		this.accessTokenService = accessTokenService;
 	}
 
-	@ApiOperation(value = "换取访问令牌", notes = "使用 AccessKey ID 和 Secret 换取短期访问令牌；调用动态 API 时需在认证请求头中携带返回的令牌")
+	@ApiOperation(value = "换取访问令牌",
+			notes = "使用 AccessKey ID 和 Secret 换取短期访问令牌；调用动态 API 时需在认证请求头中携带返回的令牌",
+			response = AccessTokenService.IssuedToken.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "换取成功",
+					response = AccessTokenService.IssuedToken.class,
+					examples = @Example(value = @ExampleProperty(
+							mediaType = "application/json",
+							value = "{\n"
+									+ "  \"accessToken\": \"eyJhayI6IjNiY2E2MGRiODc0ZjYxNzZhM2UxYTg3NyIsInQiOjM1NjEyMywiZXhwIjoxNzkyMjI2NjU0fQ.iIsvqBPscEV-CjfrumGtlg\",\n"
+									+ "  \"expiresIn\": 3600,\n"
+									+ "  \"tokenType\": \"token\"\n"
+									+ "}"))),
+			@ApiResponse(code = 401, message = "AccessKey ID 或 Secret 校验失败")
+	})
 	@PostMapping("/token")
 	public ResponseEntity<?> issueToken(@RequestBody TokenRequest request) {
 		try {

@@ -12,7 +12,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 /**
  * Swagger 文档配置
  *
- * 用于把常规 Spring MVC 控制器（如 SaaS Token 认证接口）纳入 Knife4j 文档。
+ * 用于把常规 Spring MVC 控制器（如 Token 认证接口）纳入 Knife4j 文档。
  * magic-api 动态接口由 magic-api-plugin-swagger 单独注册，与此处互不影响。
  */
 @Configuration
@@ -31,7 +31,7 @@ public class SwaggerConfiguration {
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				.title("SaaS Token 认证接口")
+				.title("Token 认证接口")
 				.description("AccessKey ID/Secret 换取短期访问令牌等认证接口")
 				.version("1.0")
 				.build();

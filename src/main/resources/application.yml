@@ -39,7 +39,6 @@ magic-api:
       message: message,
       data,
       timestamp,
-      requestTime,
       executeTime,
     }
   response-code:
@@ -70,7 +69,7 @@ magic-api:
     description: OpenAPI接口信息
     title: OpenAPI接口文档
     name: OpenAPI接口
-    location: /v2/api-docs/magic-api/swagger2.json
+    location: /v2/api-docs/openapi/swagger2.json
   debug:
     timeout: 60
 knife4j:

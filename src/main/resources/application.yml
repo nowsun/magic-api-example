@@ -1,6 +1,6 @@
 server:
   address: 127.0.0.1
-  port: 9999
+  port: 8888
   compression:
     enabled: true
     min-response-size: 128
@@ -22,7 +22,6 @@ magic-api:
   auto-import-package: java.lang.*,java.util.*
   allow-override: false
   sql-column-case: camel
-  editor-config: classpath:./magic-editor.js
   support-cross-domain: false
   push-path: /_magic-api-sync
   show-sql: true

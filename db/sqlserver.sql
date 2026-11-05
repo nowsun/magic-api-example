@@ -61,10 +61,12 @@ BEGIN
         id                     bigint         NOT NULL IDENTITY(1,1),
         tenant_id              bigint         NOT NULL,
         access_key_id          nvarchar(128)  COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL,
+        access_key_secret      char(64)       NULL,
         access_key_secret_hash char(64)       NOT NULL,
         status                 smallint       NOT NULL CONSTRAINT DF_magic_api_access_status DEFAULT 1,
         expires_at             datetime2      NULL,
         created_at             datetime2      NOT NULL CONSTRAINT DF_magic_api_access_created_at DEFAULT sysdatetime(),
+		remark                 nvarchar(128)  null,
         CONSTRAINT PK_magic_api_access PRIMARY KEY (id),
         CONSTRAINT UQ_magic_api_access_key_id UNIQUE (access_key_id)
     );

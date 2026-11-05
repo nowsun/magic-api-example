@@ -5,7 +5,6 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,18 +29,11 @@ public class MagicApiIniEnvironmentPostProcessor implements EnvironmentPostProce
 		try (Reader reader = Files.newBufferedReader(CONFIG_PATH, StandardCharsets.UTF_8)) {
 			Map<String, Object> properties = readIni(reader);
 			MapPropertySource propertySource = new MapPropertySource(PROPERTY_SOURCE_NAME, properties);
-			String applicationConfigSource = null;
-			for (PropertySource<?> source : environment.getPropertySources()) {
-				if (source.getName().startsWith("applicationConfig:")) {
-					applicationConfigSource = source.getName();
-					break;
-				}
-			}
-			if (applicationConfigSource == null) {
-				environment.getPropertySources().addLast(propertySource);
-			} else {
-				environment.getPropertySources().addBefore(applicationConfigSource, propertySource);
-			}
+			// Spring Boot 2.4 起 ConfigFileApplicationListener 被 ConfigData 机制取代，
+			// "applicationConfig:" 前缀的 property source 已不存在，原先的 addBefore
+			// 永远找不到插入点而退回 addLast（最低优先级），导致 ini 无法覆盖 jar 内 application.yml。
+			// 这里改为最高优先级，保证外部 ini 能覆盖 jar 内配置。
+			environment.getPropertySources().addFirst(propertySource);
 		} catch (IOException e) {
 			throw new IllegalStateException("Unable to read " + CONFIG_PATH.toAbsolutePath(), e);
 		}
